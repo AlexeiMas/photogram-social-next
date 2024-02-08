@@ -4,7 +4,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'utfs.io'
+        hostname: 'utfs.io',
       },
       {
         protocol: 'https',
@@ -12,8 +12,8 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'upload.wikimedia.org'
-      }
+        hostname: 'upload.wikimedia.org',
+      },
     ],
   },
 };

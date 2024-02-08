@@ -112,3 +112,92 @@ export async function fetchPostByUsername(username: string, postId?: string) {
     throw new Error('Failed to fetch post');
   }
 }
+
+export async function fetchProfile(username: string) {
+  noStore();
+
+  try {
+    const data = await prisma.user.findUnique({
+      where: {
+        username,
+      },
+      include: {
+        posts: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+        saved: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+        followedBy: {
+          include: {
+            follower: {
+              include: {
+                following: true,
+                followedBy: true,
+              },
+            },
+          },
+        },
+        following: {
+          include: {
+            following: {
+              include: {
+                following: true,
+                followedBy: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return data;
+  } catch (e) {
+    console.error('Database Error:', e);
+    throw new Error('Failed to fetch profile');
+  }
+}
+
+export async function fetchSavedPostsByUsername(username: string) {
+  noStore();
+
+  try {
+    const data = await prisma.savedPost.findMany({
+      where: {
+        user: {
+          username,
+        },
+      },
+      include: {
+        post: {
+          include: {
+            comments: {
+              include: {
+                user: true,
+              },
+              orderBy: {
+                createdAt: 'desc',
+              },
+            },
+            likes: {
+              include: {
+                user: true,
+              },
+            },
+            savedBy: true,
+            user: true,
+          },
+        },
+      },
+    });
+
+    return data;
+  } catch (e) {
+    console.error('Database Error:', e);
+    throw new Error('Failed to fetch saved posts');
+  }
+}
